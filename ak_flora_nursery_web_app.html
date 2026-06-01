@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#085041">
+<title>AK Flora Nursery</title>
+<!-- © Arun Kumar Vadam — All Rights Reserved -->
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g:#1d9e75;--gd:#085041;--gl:#e1f5ee;
+  --r:#e24b4a;--rl:#fcebeb;
+  --a:#ba7517;--al:#faeeda;
+  --b:#378add;--bl:#e6f1fb;
+  --p:#7d3c98;--pl:#f5eef8;
+  --bg:#f5f7f5;--card:#fff;
+  --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
+  --text:#1a2e1a;--text2:#4a6a4a;--text3:#8aa08a;
+  --sh:0 1px 6px rgba(0,60,0,.09);
+  --rad:12px;--rad2:8px;
+}
+@media(prefers-color-scheme:dark){
+  :root{--bg:#0d1a0f;--card:#162118;--border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.18);--text:#e0f0e0;--text2:#90b890;--text3:#4a7a4a;--sh:0 1px 6px rgba(0,0,0,.4);--gl:#0d2b1e;--rl:#2a1010;--al:#2a1e00;--bl:#0d1e2a;--pl:#1e0d2a}
+}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;overflow:hidden}
+.app{height:100vh;display:flex;flex-direction:column;overflow:hidden;max-width:480px;margin:0 auto}
+
+/* TOPBAR */
+.topbar{background:var(--gd);color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px;height:52px;flex-shrink:0}
+.tb-logo{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.tb-info{flex:1;min-width:0}
+.tb-title{font-size:14px;font-weight:600;line-height:1.2}
+.tb-sub{font-size:10px;opacity:.6;display:flex;align-items:center;gap:4px;margin-top:1px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#52be80;flex-shrink:0}
+.sync-dot.syncing{animation:pulse 1s infinite}
+.sync-dot.offline{background:#e24b4a}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-actions{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:none;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;overflow-x:hidden}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.page{padding:12px;display:none}
+.page.active{display:block}
+
+/* BOTTOM NAV */
+.botnav{background:var(--card);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom)}
+.nb{flex:1;border:none;background:none;padding:8px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit;color:var(--text3)}
+.nb.on{color:var(--g)}
+.nb-icon{font-size:22px;line-height:1}
+.nb-lbl{font-size:9px;font-weight:600}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--rad);border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
+.card-hd{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:12px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px}
+.card-icon{font-size:15px}
+.card-body{padding:12px 14px}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:12px 14px;border-top:3px solid var(--g)}
+.metric.a{border-top-color:var(--a)}.metric.r{border-top-color:var(--r)}.metric.b{border-top-color:var(--b)}.metric.p{border-top-color:var(--p)}
+.metric-val{font-size:24px;font-weight:600;line-height:1;color:var(--text)}
+.metric-lbl{font-size:10px;color:var(--text3);margin-top:4px;font-weight:600}
+.metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* LISTS */
+.list-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.list-main{flex:1;min-width:0}
+.list-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.list-right{text-align:right;flex-shrink:0}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap}
+.bg-g{background:var(--gl);color:var(--gd)}.bg-r{background:var(--rl);color:#7a1010}
+.bg-a{background:var(--al);color:#6a3a00}.bg-b{background:var(--bl);color:#0a3a6a}
+.bg-p{background:var(--pl);color:#4a1060}.bg-gr{background:var(--bg);color:var(--text3)}
+
+/* STAGE TRACK */
+.stage-track{display:flex;align-items:flex-start;padding:10px 14px}
+.st-step{display:flex;flex-direction:column;align-items:center;flex:1}
+.st-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--border2);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text3);position:relative;z-index:1}
+.st-dot.done{background:var(--g);border-color:var(--g);color:#fff}
+.st-dot.current{background:var(--a);border-color:var(--a);color:#fff}
+.st-lbl{font-size:9px;color:var(--text3);margin-top:3px;text-align:center;font-weight:600}
+.st-done .st-lbl{color:var(--g)}.st-current .st-lbl{color:var(--a)}
+.st-line{flex:1;height:2px;background:var(--border);margin-top:13px}
+.st-line.done{background:var(--g)}
+
+/* FORMS */
+.section{margin-bottom:14px}
+.section-title{font-size:10px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--rad2);font-size:13px;font-family:inherit;background:var(--card);color:var(--text);outline:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--g)}
+input[readonly]{background:var(--bg);color:var(--text3)}
+textarea{min-height:56px;resize:vertical}
+
+/* TRAY BOX */
+.tray-box{background:linear-gradient(135deg,var(--gd),var(--g));color:#fff;border-radius:var(--rad);padding:16px;text-align:center;margin:8px 0}
+.tray-num{font-size:48px;font-weight:700;line-height:1}
+.tray-lbl{font-size:12px;opacity:.8;margin-top:4px}
+.tray-detail{font-size:11px;opacity:.6;margin-top:6px}
+
+/* LABOUR CHIPS */
+.labour-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.lchip{border:1px solid var(--border);border-radius:var(--rad2);padding:8px 10px;cursor:pointer;display:flex;align-items:center;gap:7px;background:var(--card);transition:all .15s}
+.lchip.on{border-color:var(--g);background:var(--gl)}
+.lchip-av{width:26px;height:26px;border-radius:50%;background:var(--gl);color:var(--gd);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lchip-info .ln{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px}
+.lchip-info .lr{font-size:9px;color:var(--text3)}
+.att-pills{display:flex;gap:6px;margin:8px 0}
+.att-pill{flex:1;padding:8px;border:1px solid var(--border2);border-radius:var(--rad2);font-size:11px;font-weight:700;cursor:pointer;text-align:center;background:var(--card);color:var(--text3);font-family:inherit;transition:all .15s}
+.att-pill.on-f{background:var(--gl);border-color:var(--g);color:var(--gd)}
+.att-pill.on-h{background:var(--al);border-color:var(--a);color:var(--a)}
+.att-pill.on-o{background:var(--bl);border-color:var(--b);color:var(--b)}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border-radius:var(--rad2);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--card);color:var(--text);font-family:inherit;transition:all .15s;text-align:center;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:scale(.97)}
+.btn-p{background:var(--g);border-color:var(--g);color:#fff}
+.btn-r{background:var(--r);border-color:var(--r);color:#fff}
+.btn-sm{padding:5px 12px;font-size:11px}
+.btn-full{width:100%;padding:13px}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
+
+/* REC BOX */
+.rec-box{background:linear-gradient(135deg,var(--gd),#0d3320);color:#fff;border-radius:var(--rad);padding:12px 14px;margin:8px 0}
+.rec-box-title{font-size:10px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.rec-item{font-size:12px;opacity:.9;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:6px;align-items:flex-start}
+.rec-item:last-child{border-bottom:none;padding-bottom:0}
+.rec-icon{flex-shrink:0;margin-top:1px}
+
+/* STOCK BAR */
+.stock-bar-wrap{height:5px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:4px}
+.stock-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* SUBNAV */
+.subnav{display:flex;overflow-x:auto;gap:4px;padding:0 12px 10px;scroll-padding:12px}
+.subnav::-webkit-scrollbar{display:none}
+.sn{border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;background:var(--card);color:var(--text3);font-family:inherit;flex-shrink:0;transition:all .15s}
+.sn.on{background:var(--g);border-color:var(--g);color:#fff}
+
+/* OFFLINE QUEUE */
+.queue-pill{background:var(--al);color:var(--a);border:1px solid var(--a);border-radius:20px;font-size:10px;font-weight:700;padding:3px 8px;cursor:pointer}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gd);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,60,0,.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end}
+.modal-bg.show{display:flex}
+.modal{background:var(--card);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:10px}
+.search-wrap input{padding-left:36px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3)}
+
+/* PROGRESS RING */
+.prog-ring{transform:rotate(-90deg)}
+.prog-circle{fill:none;stroke:var(--border);stroke-width:4}
+.prog-fill{fill:none;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .5s}
+
+/* COLOUR FLAGS */
+.flag-g{color:var(--g)}.flag-r{color:var(--r)}.flag-a{color:var(--a)}.flag-b{color:var(--b)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-logo">🌿</div>
+  <div class="tb-info">
+    <div class="tb-title">AK Flora Nursery</div>
+    <div class="tb-sub">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">Loading...</span>
+    </div>
+  </div>
+  <div class="tb-actions">
+    <div class="icon-btn" id="queueBtn" style="display:none" onclick="showQueue()" title="Offline queue">📤</div>
+    <div class="icon-btn" onclick="manualSync()" title="Sync now">🔄</div>
+    <div class="icon-btn" onclick="showPage('alerts')" title="Alerts">🔔</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div id="pg-today" class="page active"></div>
+  <div id="pg-ops" class="page"></div>
+  <div id="pg-labour" class="page"></div>
+  <div id="pg-batches" class="page"></div>
+  <div id="pg-more" class="page"></div>
+  <div id="pg-alerts" class="page"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="botnav">
+  <button class="nb on" id="nb-today" onclick="showPage('today')">
+    <div class="nb-icon">☀️</div><div class="nb-lbl">Today</div>
+  </button>
+  <button class="nb" id="nb-ops" onclick="showPage('ops')">
+    <div class="nb-icon">📋</div><div class="nb-lbl">Operations</div>
+  </button>
+  <button class="nb" id="nb-labour" onclick="showPage('labour')">
+    <div class="nb-icon">👷</div><div class="nb-lbl">Labour</div>
+  </button>
+  <button class="nb" id="nb-batches" onclick="showPage('batches')">
+    <div class="nb-icon">🗂️</div><div class="nb-lbl">Batches</div>
+  </button>
+  <button class="nb" id="nb-more" onclick="showPage('more')">
+    <div class="nb-icon">⚙️</div><div class="nb-lbl">More</div>
+  </button>
+</nav>
+</div>
+
+<!-- OFFLINE QUEUE MODAL -->
+<div class="modal-bg" id="queueModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:12px">📤 Offline Queue</div>
+    <div id="queueList"></div>
+    <button class="btn btn-p btn-full" onclick="flushQueue()" style="margin-top:10px">Send All Now</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// AK FLORA NURSERY — COMPLETE WEB APPLICATION
+// © Arun Kumar Vadam — All Rights Reserved
+// Every change in Admin Settings → Sync → App updates auto
+// ═══════════════════════════════════════════════════════════
+
+var WEBHOOK = localStorage.getItem("AKF_WEBHOOK") || "";
+var AUTO_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
+var offlineQueue = JSON.parse(localStorage.getItem("AKF_QUEUE") || "[]");
+var syncTimer = null;
+var isOnline = navigator.onLine;
+var lastSynced = localStorage.getItem("AKF_LAST_SYNC") || null;
+var curPage = "today";
+var curOpsPage = "cutting";
+var attType = "Full Day";
+var labSel = {};
+
+// ── DEFAULT DATA (replaced by Sheets on sync) ──
+var db = {
+  varieties: ["Snowball","Royal Violet","Pink Charm","Golden Eagle","Purple Prince","Crimson Red"],
+  supervisors: ["Chennu","Raju","Suresh","Venkatesh"],
+  chemicals: ["Thiomethoxam 25% WG","Acephate 75% SP","Lambda Cyhalothrin","Mancozeb 75% WP","Propiconazole 25%","Wettable Sulphur","Trichoderma Viride"],
+  fertilizers: ["NPK 19:19:19","Calcium Nitrate","DAP","NPK 0:52:34","Urea","Potassium Chloride","Magnesium Sulphate"],
+  hormones: ["IBA Hormone","NAA","IBA + NAA","Rootex Powder"],
+  chambers: ["MC-01","MC-02","MC-03"],
+  operations: ["Pinching (1st)","Pinching (2nd)","De-suckering","De-shooting","Thinning","Disbudding","Netting / Staking","Weeding","Tray Filling","Cutting Sticking","Tray Shifting","General Work"],
+  motherBlocks: ["PF-P4-B1 (Mother)","PF-P4-B2 (Mother)"],
+  pestTypes: ["Thrips","Aphids","Spider Mites","Whitefly","Mealybug","Fungus Gnat"],
+  diseaseTypes: ["Powdery Mildew","Downy Mildew","Botrytis","Root Rot","Damping Off"],
+  labourMaster: [
+    {id:"L01",name:"Raju Kumar",role:"Male Labour",rate:280},
+    {id:"L02",name:"Suresh M",role:"Male Labour",rate:280},
+    {id:"L03",name:"Kavitha R",role:"Female Labour",rate:250},
+    {id:"L04",name:"Lakshmi D",role:"Female Labour",rate:250},
+    {id:"L05",name:"Venkatesh P",role:"Permanent",rate:350},
+    {id:"L06",name:"Anitha S",role:"Permanent",rate:300},
+    {id:"L07",name:"Murali T",role:"Male Labour",rate:280},
+    {id:"L08",name:"Padma K",role:"Female Labour",rate:250},
+    {id:"L09",name:"Ganesh B",role:"Male Labour",rate:280},
+    {id:"L10",name:"Suma P",role:"Female Labour",rate:250},
+  ],
+  batches: [
+    {id:"NB-2026-05-001",variety:"Snowball",block:"PF-P4-B1",chamber:"MC-01",cuttings:980,trays:10,available:940,stage:"Rooting",rootPct:72,mortality:40,stickDate:"2026-05-10",identDate:"2026-05-08",expRoot:"2026-05-28",expTransfer:"2026-06-07",status:"On Track"},
+    {id:"NB-2026-05-002",variety:"Royal Violet",block:"PF-P4-B2",chamber:"MC-02",cuttings:784,trays:8,available:750,stage:"Hardening",rootPct:91,mortality:34,stickDate:"2026-05-03",identDate:"2026-05-01",expRoot:"2026-05-21",expTransfer:"2026-05-31",status:"Overdue"},
+    {id:"NB-2026-05-003",variety:"Pink Charm",block:"PF-P4-B1",chamber:"MC-01",cuttings:588,trays:6,available:565,stage:"Ready",rootPct:96,mortality:23,stickDate:"2026-04-25",identDate:"2026-04-23",expRoot:"2026-05-13",expTransfer:"2026-05-23",status:"Transfer Now"},
+    {id:"NB-2026-05-004",variety:"Golden Eagle",block:"PF-P4-B2",chamber:"MC-02",cuttings:490,trays:5,available:482,stage:"Rooting",rootPct:35,mortality:8,stickDate:"2026-05-18",identDate:"2026-05-16",expRoot:"2026-06-05",expTransfer:"2026-06-15",status:"On Track"},
+  ],
+  stock: [
+    {name:"NPK 19:19:19",cat:"Fertilizer",unit:"kg",current:58,reorder:100,opening:200},
+    {name:"IBA Hormone",cat:"Hormone",unit:"g",current:180,reorder:150,opening:500},
+    {name:"Mancozeb 75%",cat:"Chemical",unit:"kg",current:7,reorder:20,opening:50},
+    {name:"98-cell Trays",cat:"Tray",unit:"pcs",current:280,reorder:500,opening:1000},
+    {name:"Cocopeat",cat:"Media",unit:"bags",current:42,reorder:15,opening:80},
+    {name:"Thiomethoxam 25%",cat:"Chemical",unit:"kg",current:22,reorder:10,opening:30},
+  ],
+  alerts: [
+    {type:"r",msg:"Mancozeb 75% critically low — 7 kg remaining (reorder: 20 kg)"},
+    {type:"r",msg:"Tray stock below reorder — 280 remaining (reorder: 500)"},
+    {type:"a",msg:"NB-2026-05-002 overdue for transfer — Royal Violet hardening complete"},
+  ],
+  chemRec: {
+    "Thrips":     ["Thiomethoxam 25% WG at 0.5g/L — High effectiveness","Acephate 75% SP at 1g/L — Medium"],
+    "Aphids":     ["Acephate 75% SP at 1g/L — High","Fipronil 5% SC at 1ml/L — High"],
+    "Spider Mites":["Wettable Sulphur 80% at 3g/L — High","Increase humidity — Spider mites thrive in dry"],
+    "Fungus Gnat":["Reduce irrigation","Trichoderma Viride drench","Yellow sticky traps"],
+    "Powdery Mildew":["Propiconazole 25% at 1ml/L — High","Wettable Sulphur 80% at 3g/L — High"],
+    "Botrytis":   ["Mancozeb 75% WP at 2g/L — High","Improve air circulation, reduce humidity"],
+    "Root Rot":   ["Trichoderma Viride drench — High","Propiconazole 25% drench — Medium"],
+    "Damping Off":["Trichoderma Viride drench","Reduce watering frequency immediately"],
+  },
+  todayCuttings: [],
+  todayLabour: [],
+  todayObs: [],
+};
+
+var today = new Date().toISOString().split("T")[0];
+
+// ═══════════════════════════════════════════════════════════
+// SYNC ENGINE — Auto-syncs from Google Sheets
+// Admin changes → Sheets → Web app reflects instantly on next sync
+// ═══════════════════════════════════════════════════════════
+
+function setSyncStatus(state, label) {
+  var dot = document.getElementById("syncDot");
+  var lbl = document.getElementById("syncLabel");
+  dot.className = "sync-dot" + (state === "syncing" ? " syncing" : state === "offline" ? " offline" : "");
+  if (lbl) lbl.textContent = label;
+}
+
+async function syncFromSheets() {
+  if (!WEBHOOK) { setSyncStatus("offline", "No URL set — set in More"); return; }
+  if (!navigator.onLine) { setSyncStatus("offline", "Offline — using cached data"); return; }
+
+  setSyncStatus("syncing", "Syncing...");
+  try {
+    var r = await fetch(WEBHOOK + "?action=getConfig", { cache: "no-store" });
+    var cfg = await r.json();
+
+    // ── Every key from Admin Settings updates here ──
+    if (cfg.varieties && cfg.varieties.length)       db.varieties      = cfg.varieties;
+    if (cfg.supervisors && cfg.supervisors.length)   db.supervisors    = cfg.supervisors;
+    if (cfg.chemicals && cfg.chemicals.length)       db.chemicals      = cfg.chemicals;
+    if (cfg.fertilizers && cfg.fertilizers.length)   db.fertilizers    = cfg.fertilizers;
+    if (cfg.hormones && cfg.hormones.length)         db.hormones       = cfg.hormones;
+    if (cfg.operations && cfg.operations.length)     db.operations     = cfg.operations;
+    if (cfg.chambers && cfg.chambers.length)         db.chambers       = cfg.chambers;
+    if (cfg.pestTypes && cfg.pestTypes.length)       db.pestTypes      = cfg.pestTypes;
+    if (cfg.diseaseTypes && cfg.diseaseTypes.length) db.diseaseTypes   = cfg.diseaseTypes;
+    if (cfg.batches && cfg.batches.length)           db.batches        = cfg.batches;
+    if (cfg.labour && cfg.labour.length)             db.labourMaster   = cfg.labour;
+    if (cfg.stock && cfg.stock.length)               db.stock          = cfg.stock;
+    if (cfg.motherBlocks && cfg.motherBlocks.length) db.motherBlocks   = cfg.motherBlocks;
+
+    lastSynced = new Date().toLocaleTimeString("en-IN", {hour:"2-digit",minute:"2-digit"});
+    localStorage.setItem("AKF_LAST_SYNC", lastSynced);
+    setSyncStatus("ok", "Synced " + lastSynced);
+
+    // Flush offline queue if any
+    if (offlineQueue.length > 0) flushQueue();
+
+    // Re-render current page with fresh data
+    renderPage(curPage);
+    toast("✅ Synced from Google Sheets");
+
+  } catch (e) {
+    setSyncStatus("offline", lastSynced ? "Last sync " + lastSynced : "Sync failed");
+  }
+}
+
+function startAutoSync() {
+  syncFromSheets();
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(syncFromSheets, AUTO_SYNC_INTERVAL);
+}
+
+function manualSync() { syncFromSheets(); }
+
+// ═══════════════════════════════════════════════════════════
+// OFFLINE QUEUE — Submit when back online
+// ═══════════════════════════════════════════════════════════
+
+function queuePost(type, data) {
+  if (navigator.onLine && WEBHOOK) {
+    sendPost(type, data);
+  } else {
+    offlineQueue.push({ type, data, ts: new Date().toISOString() });
+    localStorage.setItem("AKF_QUEUE", JSON.stringify(offlineQueue));
+    updateQueueBadge();
+    toast("📥 Saved to offline queue — will sync when online");
+  }
+}
+
+async function sendPost(type, data) {
+  if (!WEBHOOK) return;
+  try {
+    await fetch(WEBHOOK, {
+      method: "POST", mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ formType: type, ...data, submittedAt: new Date().toISOString() })
+    });
+  } catch (e) {
+    offlineQueue.push({ type, data, ts: new Date().toISOString() });
+    localStorage.setItem("AKF_QUEUE", JSON.stringify(offlineQueue));
+    updateQueueBadge();
+  }
+}
+
+async function flushQueue() {
+  if (!WEBHOOK || !navigator.onLine || offlineQueue.length === 0) return;
+  var q = [...offlineQueue];
+  offlineQueue = [];
+  localStorage.setItem("AKF_QUEUE", "[]");
+  updateQueueBadge();
+  for (var item of q) { await sendPost(item.type, item.data); }
+  toast("✅ " + q.length + " queued submissions sent");
+  document.getElementById("queueModal").classList.remove("show");
+}
+
+function updateQueueBadge() {
+  var btn = document.getElementById("queueBtn");
+  btn.style.display = offlineQueue.length > 0 ? "flex" : "none";
+}
+
+function showQueue() {
+  var list = document.getElementById("queueList");
+  if (offlineQueue.length === 0) {
+    list.innerHTML = "<p style='font-size:13px;color:var(--text3);text-align:center;padding:16px'>Queue is empty</p>";
+  } else {
+    list.innerHTML = offlineQueue.map((q,i) => `
+      <div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <span style="font-weight:700">${q.type}</span>
+        <span style="color:var(--text3);margin-left:8px">${new Date(q.ts).toLocaleTimeString()}</span>
+      </div>`).join("");
+  }
+  document.getElementById("queueModal").classList.add("show");
+}
+
+window.addEventListener("online",  () => { isOnline = true;  setSyncStatus("ok","Back online"); flushQueue(); syncFromSheets(); });
+window.addEventListener("offline", () => { isOnline = false; setSyncStatus("offline","Offline"); });
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+
+function showPage(p) {
+  curPage = p;
+  document.querySelectorAll(".page").forEach(el => el.classList.remove("active"));
+  document.getElementById("pg-" + p) && document.getElementById("pg-" + p).classList.add("active");
+  document.querySelectorAll(".nb").forEach(b => b.classList.remove("on"));
+  var nb = document.getElementById("nb-" + p);
+  if (nb) nb.classList.add("on");
+  renderPage(p);
+  document.querySelector(".content").scrollTop = 0;
+}
+
+function renderPage(p) {
+  var el = document.getElementById("pg-" + p);
+  if (!el) return;
+  var renders = {
+    today: renderToday, ops: renderOps, labour: renderLabour,
+    batches: renderBatches, more: renderMore, alerts: renderAlerts
+  };
+  if (renders[p]) el.innerHTML = renders[p]();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE: TODAY (End-of-Day Intelligence)
+// ═══════════════════════════════════════════════════════════
+
+function renderToday() {
+  var act = db.batches.filter(b => b.stage !== "Transferred");
+  var totalTraysRooting = act.filter(b=>b.stage==="Rooting").reduce((s,b)=>s+b.trays,0);
+  var totalPlantsSystem = act.reduce((s,b)=>s+b.available,0);
+  var newTraysToday = db.todayCuttings.reduce((s,c)=>s+c.trays,0);
+  var totalWorkers = db.todayLabour.length;
+  var totalHours = db.todayLabour.reduce((s,l)=>s+parseFloat(l.hours||0),0);
+  var readyBatches = db.batches.filter(b=>b.stage==="Ready");
+  var lowStock = db.stock.filter(s=>s.current<=s.reorder);
+
+  return `
+<div style="padding-bottom:8px">
+  <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">End-of-day summary — ${fmtDate(today)}</div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-val flag-g">${totalTraysRooting}</div>
+      <div class="metric-lbl">Trays in rooting</div>
+      <div class="metric-sub">${newTraysToday>0?newTraysToday+" new today":"—"}</div>
+    </div>
+    <div class="metric a">
+      <div class="metric-val flag-a">${totalWorkers||"—"}</div>
+      <div class="metric-lbl">Workers today</div>
+      <div class="metric-sub">${totalHours>0?totalHours.toFixed(1)+" man-hours":"Log in Labour tab"}</div>
+    </div>
+    <div class="metric b">
+      <div class="metric-val flag-b">${totalPlantsSystem.toLocaleString()}</div>
+      <div class="metric-lbl">Plants in system</div>
+      <div class="metric-sub">${act.length} active batches</div>
+    </div>
+    <div class="metric r">
+      <div class="metric-val flag-r">${lowStock.length}</div>
+      <div class="metric-lbl">Stock alerts</div>
+      <div class="metric-sub">${readyBatches.length} batch${readyBatches.length!==1?"es":""} ready</div>
+    </div>
+  </div>
+
+  ${newTraysToday>0?`
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="card-icon">✂️</span>Trays prepared today</div></div>
+    ${db.todayCuttings.map(c=>`
+    <div class="list-row">
+      <div class="list-main">
+        <div class="list-title">${c.variety}</div>
+        <div class="list-sub">${c.cuttings.toLocaleString()} cuttings → ${c.trays} trays</div>
+      </div>
+      <div class="list-right">
+        <div style="font-size:18px;font-weight:700;color:var(--g)">${c.trays}</div>
+        <div style="font-size:10px;color:var(--text3)">trays</div>
+      </div>
+    </div>`).join("")}
+  </div>`:""}
+
+  ${totalWorkers>0?`
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title"><span class="card-icon">👷</span>Labour today</div>
+      <span class="badge bg-g">${totalHours.toFixed(1)}h total</span>
+    </div>
+    ${db.todayLabour.map(l=>`
+    <div class="list-row">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--gl);color:var(--gd);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${l.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</div>
+      <div class="list-main">
+        <div class="list-title">${l.name}</div>
+        <div class="list-sub">${l.operation} · ${l.attType}</div>
+      </div>
+      <div class="list-right flag-g" style="font-weight:700">${l.hours}h</div>
+    </div>`).join("")}
+  </div>`:`
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="card-icon">👷</span>Labour today</div></div>
+    <div style="padding:16px 14px;text-align:center;font-size:13px;color:var(--text3)">
+      No labour logged yet<br>
+      <button class="btn btn-sm" style="margin-top:8px" onclick="showPage('labour')">Log Labour Now</button>
+    </div>
+  </div>`}
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="card-icon">🌱</span>Variety readiness — which is ready and when</div></div>
+    ${db.batches.filter(b=>b.stage!=="Transferred").map(b=>{
+      var d = daysTo(b.expTransfer);
+      var dstr = d===null?"—":d<0?Math.abs(d)+"d overdue":d===0?"Transfer TODAY":d+"d left";
+      var dc = d!==null&&d<0?"flag-r":d===0?"flag-g":"";
+      var sc = stageClass(b.stage);
+      return `<div class="list-row">
+        <div class="list-main">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+            <span class="list-title">${b.variety}</span>
+            <span class="badge ${sc}">${b.stage}</span>
+          </div>
+          <div class="list-sub">${b.id} · ${b.available.toLocaleString()} plants · ${b.trays} trays</div>
+          <div class="list-sub">Exp. transfer: ${fmtDate(b.expTransfer)}</div>
+        </div>
+        <div class="list-right">
+          <div style="font-size:12px;font-weight:700" class="${dc}">${dstr}</div>
+          <div style="font-size:11px;color:var(--text3)">${b.rootPct}% rooted</div>
+        </div>
+      </div>`;
+    }).join("")}
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="card-icon">📅</span>Variety identification & key dates</div></div>
+    ${db.batches.map(b=>`
+    <div class="list-row">
+      <div class="list-main">
+        <div class="list-title">${b.variety}</div>
+        <div class="list-sub">${b.id}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:right;line-height:1.8">
+        <div>🔖 Identified: <strong style="color:var(--text)">${fmtDate(b.identDate)}</strong></div>
+        <div>📌 Sticked: <strong style="color:var(--text)">${fmtDate(b.stickDate)}</strong></div>
+        <div>🌿 Exp. root: <strong style="color:var(--text)">${fmtDate(b.expRoot)}</strong></div>
+        <div>🚚 Transfer: <strong style="color:var(--g)">${fmtDate(b.expTransfer)}</strong></div>
+      </div>
+    </div>`).join("")}
+  </div>
+
+  ${readyBatches.length>0?`
+  <div class="card" style="border-color:var(--g)">
+    <div class="card-hd">
+      <div class="card-title"><span class="card-icon">🚚</span>Ready for transfer now</div>
+      <span class="badge bg-g">${readyBatches.length} batch${readyBatches.length!==1?"es":""}</span>
+    </div>
+    ${readyBatches.map(b=>`
+    <div class="list-row">
+      <div class="list-main">
+        <div class="list-title">${b.variety}</div>
+        <div class="list-sub">${b.available.toLocaleString()} plants ready · ${b.id}</div>
+      </div>
+      <button class="btn btn-p btn-sm" onclick="curOpsPage='transfer';showPage('ops')">Transfer →</button>
+    </div>`).join("")}
+  </div>`:""}
+
+  ${lowStock.length>0?`
+  <div class="card" style="border-color:var(--r)">
+    <div class="card-hd"><div class="card-title"><span class="card-icon">📦</span>Stock alerts</div><span class="badge bg-r">${lowStock.length}</span></div>
+    ${lowStock.map(s=>`
+    <div class="list-row">
+      <div class="list-main">
+        <div class="list-title">${s.name}</div>
+        <div class="list-sub">Current: ${s.current} ${s.unit} · Reorder at: ${s.reorder}</div>
+        <div class="stock-bar-wrap"><div class="stock-bar-fill" style="width:${Math.min(100,Math.round(s.current/s.opening*100))}%;background:${s.current<=0?"var(--r)":"var(--a)"}"></div></div>
+      </div>
+      <span class="badge ${s.current<=0?"bg-r":"bg-a"}">${s.current<=0?"OUT":"REORDER"}</span>
+    </div>`).join("")}
+  </div>`:""}
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE: OPERATIONS
+// ═══════════════════════════════════════════════════════════
+
+function renderOps() {
+  var subpages = {
+    cutting: renderCutting, mbdaily: renderMBDaily,
+    rooting: renderRooting, mortality: renderMortality,
+    transfer: renderTransfer, spray: renderSpray,
+    fert: renderFert, irrigation: renderIrrigation
+  };
+  return `
+<div class="subnav">
+  ${[["cutting","✂️ Cutting"],["mbdaily","🌱 Mother Block"],["rooting","🌿 Rooting"],
+     ["mortality","📉 Mortality"],["transfer","🚚 Transfer"],
+     ["spray","🌫️ Spray"],["fert","🧪 Fertigation"],["irrigation","💧 Irrigation"]
+  ].map(([k,l])=>`<button class="sn ${curOpsPage===k?"on":""}" onclick="curOpsPage='${k}';renderPage('ops')">${l}</button>`).join("")}
+</div>
+${(subpages[curOpsPage]||renderCutting)()}`;
+}
+
+function renderCutting() {
+  return `<div class="card">
+    <div class="card-hd"><div class="card-title"><span class="card-icon">✂️</span>Cutting collection entry</div></div>
+    <div class="card-body">
+      <div class="section">
+        <div class="section-title">Collection details</div>
+        <div class="fgrid">
+          <div class="fg"><label>Date</label><input type="date" id="c_date" value="${today}"></div>
+          <div class="fg"><label>Variety</label><select id="c_var">${db.varieties.map(v=>`<option>${v}</option>`).join("")}</select></div>
+          <div class="fg"><label>Mother block</label><select id="c_block">${db.motherBlocks.map(b=>`<option>${b}</option>`).join("")}</select></div>
+          <div class="fg"><label>Supervisor</label><select id="c_sup">${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Cutting count — auto-calculates trays</div>
+        <div class="fgrid">
+          <div class="fg"><label>Total cuttings</label><input type="number" id="c_total" placeholder="e.g. 1000" oninput="calcTrays()"></div>
+          <div class="fg"><label>Healthy cuttings</label><input type="number" id="c_healthy" placeholder="e.g. 960" oninput="calcTrays()"></div>
+          <div class="fg"><label>Rejected</label><input type="number" id="c_rej" readonly placeholder="auto"></div>
+          <div class="fg"><label>Rejection reason</label><select><option>No rejection</option><option>Too short</option><option>Too thin</option><option>Disease</option><option>Pest</option><option>Wilted</option></select></div>
+        </div>
+        <div id="trayBox" style="display:none" class="tray-box">
+          <div class="tray-num" id="trayNum">0</div>
+          <div class="tray-lbl">98-cell trays required</div>
+          <div class="tray-detail" id="trayDetail"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Propagation setup</div>
+        <div class="fgrid">
+          <div class="fg"><label>Rooting hormone</label><select>${db.hormones.map(h=>`<option>${h}</option>`).join("")}<option>None</option></select></div>
+          <div class="fg"><label>Propagation media</label><select><option>Pure Cocopeat</option><option>Cocopeat + Perlite (70:30)</option><option>Cocopeat + Vermiculite</option></select></div>
+          <div class="fg"><label>Mist chamber</label><select>${db.chambers.map(c=>`<option>${c}</option>`).join("")}</select></div>
+          <div class="fg"><label>Mother plant condition</label><select><option>Excellent</option><option>Good</option><option>Fair</option><option>Poor</option></select></div>
+        </div>
+      </div>
+      <div class="fg full"><label>Remarks</label><textarea placeholder="Any observations about this collection..."></textarea></div>
+      <button class="btn btn-p btn-full" onclick="submitCutting()">Submit — Auto-creates nursery batch</button>
+    </div>
+  </div>`;
+}
+
+function calcTrays() {
+  var total = parseInt(document.getElementById("c_total").value)||0;
+  var healthy = parseInt(document.getElementById("c_healthy").value)||0;
+  var rej = document.getElementById("c_rej");
+  if (total && healthy) rej.value = Math.max(0, total-healthy);
+  var trays = healthy>0?Math.ceil(healthy/98):0;
+  var box = document.getElementById("trayBox");
+  if (trays>0) {
+    box.style.display = "block";
+    document.getElementById("trayNum").textContent = trays;
+    document.getElementById("trayDetail").textContent = healthy.toLocaleString()+" cuttings ÷ 98 cells = "+trays+" trays";
+  } else if (box) box.style.display = "none";
+}
+
+function submitCutting() {
+  var healthy = parseInt(document.getElementById("c_healthy")?.value)||0;
+  if (!healthy) { toast("Enter healthy cutting count"); return; }
+  var variety = document.getElementById("c_var").value;
+  var trays = Math.ceil(healthy/98);
+  var now = new Date();
+  var bId = "NB-"+now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(db.batches.length+1).padStart(3,"0");
+  var expRoot = new Date(now); expRoot.setDate(expRoot.getDate()+18);
+  var expTrans = new Date(expRoot); expTrans.setDate(expTrans.getDate()+10);
+  db.batches.unshift({
+    id:bId,variety:variety,block:"PF-P4-B1",chamber:"MC-01",
+    cuttings:healthy,trays:trays,available:healthy,stage:"Rooting",rootPct:0,mortality:0,
+    stickDate:today,identDate:today,expRoot:expRoot.toISOString().split("T")[0],
+    expTransfer:expTrans.toISOString().split("T")[0],status:"On Track"
+  });
+  db.todayCuttings.push({variety,cuttings:healthy,trays,date:today});
+  queuePost("cutting",{batchId:bId,variety,block:"PF-P4-B1",healthyCuttings:healthy,trays,stickDate:today,identDate:today,expRoot:expRoot.toISOString().split("T")[0],expTransfer:expTrans.toISOString().split("T")[0]});
+  toast("✅ Batch "+bId+" created · "+trays+" trays");
+  setTimeout(()=>showPage("batches"),1200);
+}
+
+function renderMBDaily() {
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">🌱</span>Mother block daily log</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Mother block</label><select>${db.motherBlocks.map(b=>`<option>${b}</option>`).join("")}</select></div>
+      <div class="fg"><label>Variety</label><select>${db.varieties.map(v=>`<option>${v}</option>`).join("")}</select></div>
+      <div class="fg"><label>Supervisor</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="section-title" style="margin:10px 0 8px">Operations done today</div>
+    <div class="fgrid">
+      <div class="fg"><label>Irrigation</label><select><option>Yes</option><option>No</option></select></div>
+      <div class="fg"><label>Fertigation</label><select><option>Yes</option><option>No</option></select></div>
+      <div class="fg"><label>Spray</label><select><option>Yes</option><option>No</option></select></div>
+      <div class="fg"><label>Cutting done</label><select><option>Yes</option><option>No</option></select></div>
+    </div>
+    <div class="section-title" style="margin:10px 0 8px">Observations</div>
+    <div class="fgrid">
+      <div class="fg"><label>Pest observed</label><select><option>None</option>${db.pestTypes.map(p=>`<option>${p}</option>`).join("")}</select></div>
+      <div class="fg"><label>Disease observed</label><select><option>None</option>${db.diseaseTypes.map(d=>`<option>${d}</option>`).join("")}</select></div>
+      <div class="fg"><label>Plant condition</label><select><option>Excellent</option><option>Good</option><option>Average</option><option>Poor</option><option>Critical</option></select></div>
+      <div class="fg"><label>Health score (1-10)</label>
+        <input type="range" min="1" max="10" value="8" id="mbScore" oninput="document.getElementById('mbScoreVal').textContent=this.value+'/10'" style="margin-top:6px">
+        <div style="text-align:center;font-weight:700;color:var(--g);font-size:16px" id="mbScoreVal">8/10</div>
+      </div>
+    </div>
+    <div class="fg"><label>Corrective action / remarks</label><textarea placeholder="What was done or needs to be done..."></textarea></div>
+    <button class="btn btn-p btn-full" onclick="quickPost('mbDaily','Mother block log saved')">Submit log</button>
+  </div></div>`;
+}
+
+function renderRooting() {
+  var act = db.batches.filter(b=>b.stage==="Rooting"||b.stage==="Hardening");
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">🌿</span>Rooting observation</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Batch</label><select id="r_batch">${act.map(b=>`<option value="${b.id}">${b.id} — ${b.variety}</option>`).join("")}</select></div>
+      <div class="fg"><label>Stage</label><select><option>Rooting</option><option>Hardening</option></select></div>
+      <div class="fg"><label>Mist chamber</label><select>${db.chambers.map(c=>`<option>${c}</option>`).join("")}</select></div>
+    </div>
+    <div class="section-title" style="margin:10px 0 8px">Rooting performance</div>
+    <div class="fgrid">
+      <div class="fg"><label>Rooting %</label><select id="r_rpct" onchange="showRootRec()"><option>0–10%</option><option>11–25%</option><option>26–50%</option><option>51–75%</option><option selected>76–90%</option><option>91–100%</option></select></div>
+      <div class="fg"><label>Dead plants %</label><select><option>None</option><option>Less than 3%</option><option>3–8%</option><option>More than 8%</option></select></div>
+      <div class="fg"><label>Fungal infection</label><select id="r_fungal" onchange="showFungalRec()"><option>None</option><option>Less than 5%</option><option>5–15%</option><option>More than 15%</option></select></div>
+      <div class="fg"><label>Moisture level</label><select><option>Optimal</option><option>Too dry</option><option>Too wet</option><option>Uneven</option></select></div>
+      <div class="fg"><label>Root length</label><select><option>No roots</option><option>Callus only</option><option>0.5–1 cm</option><option>1–2 cm</option><option>2–3 cm</option><option>More than 3 cm</option></select></div>
+      <div class="fg"><label>EC reading</label><select><option>Not measured</option><option>Below 1.0</option><option>1.0–1.5 optimal</option><option>1.5–2.0</option><option>Above 2.0</option></select></div>
+    </div>
+    <div class="section-title" style="margin:10px 0 8px">Pest & disease</div>
+    <div class="fgrid">
+      <div class="fg"><label>Pest observed</label><select id="r_pest" onchange="showPestRec(this.value)"><option>None</option>${db.pestTypes.map(p=>`<option>${p}</option>`).join("")}</select></div>
+      <div class="fg"><label>Disease observed</label><select id="r_dis" onchange="showDisRec(this.value)"><option>None</option>${db.diseaseTypes.map(d=>`<option>${d}</option>`).join("")}</select></div>
+    </div>
+    <div id="rootingRec"></div>
+    <div class="fg"><label>Observed by</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    <div class="fg"><label>Notes</label><textarea placeholder="What you observed today..."></textarea></div>
+    <button class="btn btn-p btn-full" onclick="submitRooting()">Submit observation</button>
+  </div></div>`;
+}
+
+function showRootRec() {
+  var v = document.getElementById("r_rpct")?.value;
+  var el = document.getElementById("rootingRec"); if(!el)return;
+  if (v==="0–10%"||v==="11–25%") el.innerHTML = recBox("Low rooting detected",["Check moisture — cocopeat should be moist not wet. Adjust mist interval.","Ideal temperature: 22–26°C. Check chamber temp.","Verify hormone was applied correctly. Consider re-treatment if day 1–5."]);
+  else el.innerHTML = "";
+}
+function showFungalRec() {
+  var v = document.getElementById("r_fungal")?.value;
+  var el = document.getElementById("rootingRec"); if(!el)return;
+  if (v!=="None") el.innerHTML = recBox("Fungal activity — act now",["Apply Mancozeb 75% WP at 2g/L as preventive drench.","Reduce mist frequency — excess moisture causes fungal growth.","Remove severely affected plants immediately to stop spread."]);
+}
+function showPestRec(p) {
+  var el = document.getElementById("rootingRec"); if(!el)return;
+  if (p!=="None"&&db.chemRec[p]) el.innerHTML = recBox("Recommendation — "+p+" control",db.chemRec[p].concat(["Rotate chemicals. Do not use same chemical more than 3 consecutive sprays."]));
+  else el.innerHTML = "";
+}
+function showDisRec(d) {
+  var el = document.getElementById("rootingRec"); if(!el)return;
+  if (d!=="None"&&db.chemRec[d]) el.innerHTML = recBox("Recommendation — "+d+" management",db.chemRec[d]);
+  else el.innerHTML = "";
+}
+function submitRooting() {
+  var bId = document.getElementById("r_batch")?.value;
+  var b = db.batches.find(x=>x.id===bId);
+  if (b) { var mid={"0–10%":5,"11–25%":18,"26–50%":38,"51–75%":63,"76–90%":83,"91–100%":95}; b.rootPct=mid[document.getElementById("r_rpct").value]||b.rootPct; }
+  db.todayObs.push({batchId:bId});
+  queuePost("rooting",{batchId:bId,date:today});
+  toast("✅ Rooting observation saved");
+}
+
+function renderMortality() {
+  var act = db.batches.filter(b=>b.stage!=="Transferred");
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">📉</span>Mortality entry</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Batch</label><select id="m_batch">${act.map(b=>`<option value="${b.id}">${b.id} — ${b.variety} (${b.available})</option>`).join("")}</select></div>
+      <div class="fg"><label>Stage</label><select><option>Rooting</option><option>Hardening</option><option>Post-hardening</option></select></div>
+      <div class="fg"><label>Count (exact number)</label><input type="number" id="m_count" placeholder="Exact count" oninput="calcMort()"></div>
+      <div class="fg"><label>Cause</label><select id="m_cause" onchange="mortRec(this.value)"><option>Fungal Damping Off</option><option>Overwatering</option><option>Underwatering</option><option>Pest Attack</option><option>Heat Stress</option><option>Poor Hormone</option><option>Unknown</option></select></div>
+      <div class="fg"><label>Severity</label><select><option>Low — less than 5%</option><option>Medium — 5–15%</option><option>High — more than 15%</option></select></div>
+      <div class="fg"><label>Action taken</label><select><option>Fungicide applied</option><option>Irrigation adjusted</option><option>Plants removed</option><option>Reported to manager</option><option>No action yet</option></select></div>
+      <div class="fg"><label>Reported by</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    </div>
+    <div id="mortPctBox" style="display:none;background:var(--rl);border-radius:var(--rad2);padding:10px;text-align:center;margin:6px 0">
+      <div style="font-size:24px;font-weight:700;color:var(--r)" id="mortPctVal">0%</div>
+      <div style="font-size:11px;color:var(--text3)">mortality % of batch</div>
+    </div>
+    <div id="mortRec"></div>
+    <div class="fg"><label>Remarks</label><textarea placeholder="Describe what you observed..."></textarea></div>
+    <button class="btn btn-p btn-full" onclick="submitMortality()">Submit — batch updates automatically</button>
+  </div></div>`;
+}
+function calcMort() {
+  var n = parseInt(document.getElementById("m_count")?.value)||0;
+  var box = document.getElementById("mortPctBox"); if(!box)return;
+  if(n>0){box.style.display="block";document.getElementById("mortPctVal").textContent=((n/980)*100).toFixed(1)+"%";}
+  else box.style.display="none";
+}
+function mortRec(c) {
+  var el = document.getElementById("mortRec"); if(!el)return;
+  var m = {"Fungal Damping Off":["Apply Trichoderma Viride drench. Reduce watering. Remove affected plants."],"Overwatering":["Reduce irrigation immediately. Check drainage. Increase mist interval to 5–10 min."],"Underwatering":["Increase mist frequency. Check dripper clogging. Manual water if needed."],"Heat Stress":["Add extra shade net. Check ventilation. Increase mist during peak heat."],"Pest Attack":["Identify pest. Apply targeted chemical. Isolate affected trays."],"Poor Hormone":["Ensure correct hormone concentration next batch. Check treatment time."]};
+  if(m[c]) el.innerHTML = recBox("Recommendation — "+c, m[c]);
+}
+function submitMortality() {
+  var n = parseInt(document.getElementById("m_count")?.value)||0;
+  if (!n) { toast("Enter mortality count"); return; }
+  var bId = document.getElementById("m_batch").value;
+  var b = db.batches.find(x=>x.id===bId);
+  if(b){b.mortality+=n;b.available=Math.max(0,b.available-n);}
+  queuePost("mortality",{batchId:bId,count:n,date:today});
+  toast("✅ Mortality recorded · batch updated");
+}
+
+function renderTransfer() {
+  var ready = db.batches.filter(b=>b.stage==="Ready"||b.stage==="Hardening");
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">🚚</span>Plant transfer & dispatch</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Batch</label><select id="t_batch" onchange="loadAvail()">${ready.map(b=>`<option value="${b.id}">${b.id} — ${b.variety} (${b.available})</option>`).join("")}${!ready.length?"<option>No batches ready</option>":""}</select></div>
+      <div class="fg"><label>Available plants</label><input type="number" id="t_avail" readonly value="${ready[0]?.available||""}"></div>
+      <div class="fg"><label>Plants to transfer</label><input type="number" id="t_qty" placeholder="Quantity" oninput="calcTransVal()"></div>
+    </div>
+    <div class="fg"><label>Destination type</label><select id="t_type" onchange="togTransType()"><option>Internal — production block</option><option>B2B external sale</option></select></div>
+    <div id="t_destWrap">
+      <div class="fgrid">
+        <div class="fg"><label>Destination farm</label><select><option>NIKHIL FLORITECH (Bagalur)</option><option>Nirek Farms (Nelamangala)</option><option>Pristine Flora internal</option></select></div>
+        <div class="fg"><label>Block code</label><input type="text" placeholder="e.g. NF-P1-B3"></div>
+      </div>
+    </div>
+    <div id="t_b2bWrap" style="display:none">
+      <div class="fgrid">
+        <div class="fg"><label>Buyer name</label><select><option>HR Flora</option><option>Other buyer</option></select></div>
+        <div class="fg"><label>Rate per plant (₹)</label><input type="number" id="t_rate" placeholder="e.g. 8" oninput="calcTransVal()"></div>
+      </div>
+      <div id="t_valBox" style="display:none;background:var(--gl);border-radius:var(--rad2);padding:10px;text-align:center;margin:4px 0">
+        <div style="font-size:20px;font-weight:700;color:var(--gd)">₹<span id="t_val">0</span></div>
+        <div style="font-size:11px;color:var(--text3)">Total transaction value</div>
+      </div>
+    </div>
+    <div class="fgrid" style="margin-top:6px">
+      <div class="fg"><label>Plant condition</label><select><option>Excellent</option><option>Good</option><option>Average</option><option>Poor</option></select></div>
+      <div class="fg"><label>Supervisor</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="fg"><label>Remarks</label><textarea placeholder="Notes about this transfer..."></textarea></div>
+    <button class="btn btn-p btn-full" onclick="submitTransfer()">Complete transfer</button>
+  </div></div>`;
+}
+function togTransType(){var isB2B=document.getElementById("t_type").value.includes("B2B");document.getElementById("t_b2bWrap").style.display=isB2B?"block":"none";document.getElementById("t_destWrap").style.display=isB2B?"none":"block";}
+function loadAvail(){var bId=document.getElementById("t_batch").value;var b=db.batches.find(x=>x.id===bId);var a=document.getElementById("t_avail");if(b&&a)a.value=b.available;}
+function calcTransVal(){var q=parseInt(document.getElementById("t_qty")?.value)||0;var r=parseFloat(document.getElementById("t_rate")?.value)||0;var box=document.getElementById("t_valBox");var val=document.getElementById("t_val");if(q&&r&&box&&val){box.style.display="block";val.textContent=(q*r).toLocaleString();}else if(box)box.style.display="none";}
+function submitTransfer(){
+  var qty=parseInt(document.getElementById("t_qty")?.value)||0;
+  if(!qty){toast("Enter transfer quantity");return;}
+  var bId=document.getElementById("t_batch").value;
+  var b=db.batches.find(x=>x.id===bId);
+  if(b){b.available=Math.max(0,b.available-qty);if(b.available===0)b.stage="Transferred";}
+  queuePost("transfer",{batchId:bId,quantity:qty,date:today});
+  toast("✅ Transfer complete · batch updated");
+  setTimeout(()=>showPage("batches"),1200);
+}
+
+function renderSpray() {
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">🌫️</span>Spray entry</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Section / batch</label><select>${db.batches.filter(b=>b.stage!=="Transferred").map(b=>`<option>${b.id}</option>`).join("")}<option>General — all sections</option></select></div>
+      <div class="fg"><label>Target pest/disease</label><select id="sp_tgt" onchange="sprayRec(this.value)"><option>General preventive</option>${db.pestTypes.map(p=>`<option>${p}</option>`).join("")}${db.diseaseTypes.map(d=>`<option>${d}</option>`).join("")}</select></div>
+      <div class="fg"><label>Chemical 1</label><select>${db.chemicals.map(c=>`<option>${c}</option>`).join("")}</select></div>
+    </div>
+    <div id="sprayRec"></div>
+    <div class="fgrid">
+      <div class="fg"><label>Dose (ml/g per L)</label><select><option>0.5</option><option>1.0</option><option>1.5</option><option>2.0</option><option>As per label</option></select></div>
+      <div class="fg"><label>Chemical 2</label><select><option>None</option>${db.chemicals.map(c=>`<option>${c}</option>`).join("")}</select></div>
+      <div class="fg"><label>Water volume</label><select><option>Less than 100L</option><option>100–200L</option><option>200–500L</option><option>More than 500L</option></select></div>
+      <div class="fg"><label>PHI (pre-harvest)</label><select><option>3 days</option><option>5 days</option><option>7 days</option><option>10 days</option><option>14 days</option></select></div>
+      <div class="fg"><label>Application method</label><select><option>Knapsack manual</option><option>Knapsack motorised</option><option>Mist blower</option></select></div>
+      <div class="fg"><label>Previous spray effective?</label><select><option>Yes — controlled</option><option>Partial</option><option>No — switching</option><option>First spray</option></select></div>
+      <div class="fg"><label>Applied by</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="fg"><label>Remarks</label><textarea placeholder="Spray coverage notes..."></textarea></div>
+    <button class="btn btn-p btn-full" onclick="quickPost('spray','Spray logged · stock auto-deducted')">Submit — stock auto-deducts</button>
+  </div></div>`;
+}
+function sprayRec(p){var el=document.getElementById("sprayRec");if(!el)return;if(db.chemRec[p])el.innerHTML=recBox("Best chemicals for "+p,db.chemRec[p]);else el.innerHTML="";}
+
+function renderFert() {
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">🧪</span>Fertigation entry</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Batch / section</label><select>${db.batches.filter(b=>b.stage!=="Transferred").map(b=>`<option>${b.id}</option>`).join("")}</select></div>
+      <div class="fg"><label>Growth stage</label><select><option>Establishment (0–5 DAP)</option><option>Early rooting (5–10)</option><option>Active rooting (10–18)</option><option>Hardening</option></select></div>
+      <div class="fg"><label>Fertilizer 1</label><select>${db.fertilizers.map(f=>`<option>${f}</option>`).join("")}</select></div>
+      <div class="fg"><label>Qty 1 (g or ml/L)</label><select><option>0.5</option><option>1.0</option><option>1.5</option><option>2.0</option><option>2.5</option><option>3.0</option></select></div>
+      <div class="fg"><label>Fertilizer 2</label><select><option>None</option>${db.fertilizers.map(f=>`<option>${f}</option>`).join("")}</select></div>
+      <div class="fg"><label>Water volume</label><select><option>Less than 200L</option><option>200–500L</option><option>500–1000L</option><option>More than 1000L</option></select></div>
+      <div class="fg"><label>EC after (mS/cm)</label><select><option>Not measured</option><option>Below 1.0 — low</option><option>1.0–1.5 — optimal</option><option>1.5–2.0 — acceptable</option><option>Above 2.0 — high</option></select></div>
+      <div class="fg"><label>Applied by</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    </div>
+    <div style="background:var(--gl);border-radius:var(--rad2);padding:10px;font-size:12px;color:var(--gd);margin:6px 0">💡 Stock deducts automatically after submission</div>
+    <button class="btn btn-p btn-full" onclick="quickPost('fert','Fertigation logged · stock deducted')">Submit — stock auto-deducts</button>
+  </div></div>`;
+}
+
+function renderIrrigation() {
+  return `<div class="card"><div class="card-hd"><div class="card-title"><span class="card-icon">💧</span>Irrigation entry</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" value="${today}"></div>
+      <div class="fg"><label>Section</label><input type="text" placeholder="e.g. MC-01, Hardening area, All sections"></div>
+      <div class="fg"><label>Irrigation type</label><select><option>Mist system</option><option>Drip</option><option>Fogger</option><option>Manual watering</option><option>Overhead sprinkler</option></select></div>
+      <div class="fg"><label>Duration</label><select><option>15–30 min</option><option>30–45 min</option><option>45–60 min</option><option>1–2 hours</option><option>More than 2 hours</option></select></div>
+      <div class="fg"><label>Mist interval</label><select><option>Every 2 min</option><option>Every 3 min</option><option>Every 5 min</option><option>Every 10 min</option><option>Manual control</option></select></div>
+      <div class="fg"><label>Water pH</label><select><option>Not measured</option><option>5.5–6.0</option><option>6.0–6.5 — optimal</option><option>6.5–7.0</option><option>Above 7.0 — alkaline</option></select></div>
+      <div class="fg"><label>Water EC</label><select><option>Not measured</option><option>Below 1.0</option><option>1.0–1.5 — optimal</option><option>1.5–2.0</option><option>Above 2.0 — high</option></select></div>
+      <div class="fg"><label>Applied by</label><select>${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    </div>
+    <div class="fg"><label>Remarks</label><textarea placeholder="Any observations about water quality or system..."></textarea></div>
+    <button class="btn btn-p btn-full" onclick="quickPost('irrigation','Irrigation logged')">Submit irrigation</button>
+  </div></div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE: LABOUR (Bulk — most important for daily use)
+// ═══════════════════════════════════════════════════════════
+
+function renderLabour() {
+  var sel = db.labourMaster.filter((_,i)=>labSel[i]);
+  var rate = attType==="Half Day"?0.5:attType==="Overtime"?1.25:1;
+  var cost = sel.reduce((s,l)=>s+l.rate*rate,0);
+  return `
+<div class="card">
+  <div class="card-hd"><div class="card-title"><span class="card-icon">👷</span>Bulk labour attendance</div></div>
+  <div class="card-body">
+    <div class="fgrid">
+      <div class="fg"><label>Date</label><input type="date" id="l_date" value="${today}"></div>
+      <div class="fg"><label>Operation</label><select id="l_op">${db.operations.map(o=>`<option>${o}</option>`).join("")}</select></div>
+      <div class="fg"><label>Section / block</label><input type="text" id="l_section" placeholder="e.g. PF-P4-B1 nursery"></div>
+      <div class="fg"><label>Supervisor</label><select id="l_sup">${db.supervisors.map(s=>`<option>${s}</option>`).join("")}</select></div>
+      <div class="fg"><label>Start time</label><input type="time" id="l_start" value="08:00"></div>
+      <div class="fg"><label>End time</label><input type="time" id="l_end" value="17:00"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px">
+      <span style="font-size:12px;font-weight:700;color:var(--text2)">${sel.length} of ${db.labourMaster.length} selected</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="selAll()">All</button>
+        <button class="btn btn-sm" onclick="clrAll()">None</button>
+      </div>
+    </div>
+    <div class="labour-grid">
+      ${db.labourMaster.map((l,i)=>`
+      <div class="lchip ${labSel[i]?"on":""}" onclick="togW(${i})">
+        <div class="lchip-av">${l.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</div>
+        <div class="lchip-info"><div class="ln">${l.name.split(" ")[0]}</div><div class="lr">${l.role}</div></div>
+      </div>`).join("")}
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text3);margin:10px 0 5px">Attendance type</div>
+    <div class="att-pills">
+      <button class="att-pill ${attType==="Full Day"?"on-f":""}" onclick="setAtt('Full Day')">Full day</button>
+      <button class="att-pill ${attType==="Half Day"?"on-h":""}" onclick="setAtt('Half Day')">Half day</button>
+      <button class="att-pill ${attType==="Overtime"?"on-o":""}" onclick="setAtt('Overtime')">Overtime</button>
+    </div>
+    ${sel.length>0?`<div style="background:var(--gl);border-radius:var(--rad2);padding:10px;margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;font-weight:700;color:var(--gd)">${sel.length} worker${sel.length!==1?"s":""} · ${attType}</span>
+      <span style="font-size:12px;color:var(--gd)">Est: ₹${Math.round(cost).toLocaleString()}</span>
+    </div>`:""}
+    <button class="btn btn-p btn-full" style="margin-top:10px" onclick="submitLabour()">
+      Submit attendance for ${sel.length} worker${sel.length!==1?"s":""}
+    </button>
+  </div>
+</div>
+${db.todayLabour.length>0?`
+<div class="card">
+  <div class="card-hd"><div class="card-title"><span class="card-icon">📊</span>Logged today — ${db.todayLabour.length} workers · ${db.todayLabour.reduce((s,l)=>s+parseFloat(l.hours||0),0).toFixed(1)}h total</div></div>
+  ${db.todayLabour.map(l=>`
+  <div class="list-row">
+    <div style="width:26px;height:26px;border-radius:50%;background:var(--gl);color:var(--gd);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${l.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</div>
+    <div class="list-main"><div class="list-title">${l.name}</div><div class="list-sub">${l.operation} · ${l.attType}</div></div>
+    <span class="flag-g" style="font-weight:700;font-size:13px">${l.hours}h</span>
+  </div>`).join("")}
+</div>`:""}`;
+}
+
+function togW(i){labSel[i]=!labSel[i];renderPage("labour");}
+function selAll(){db.labourMaster.forEach((_,i)=>labSel[i]=true);renderPage("labour");}
+function clrAll(){db.labourMaster.forEach((_,i)=>labSel[i]=false);renderPage("labour");}
+function setAtt(t){attType=t;renderPage("labour");}
+function submitLabour(){
+  var sel=db.labourMaster.filter((_,i)=>labSel[i]);
+  if(!sel.length){toast("Select at least one worker");return;}
+  var start=document.getElementById("l_start")?.value||"08:00";
+  var end=document.getElementById("l_end")?.value||"17:00";
+  var sh=parseInt(start.split(":")[0])+parseInt(start.split(":")[1])/60;
+  var eh=parseInt(end.split(":")[0])+parseInt(end.split(":")[1])/60;
+  var hrs=Math.max(0,eh-sh);
+  if(attType==="Half Day")hrs=hrs/2;
+  var op=document.getElementById("l_op")?.value||"General Work";
+  sel.forEach(l=>db.todayLabour.push({name:l.name,operation:op,hours:hrs.toFixed(1),attType,date:today}));
+  queuePost("labour",{workers:sel.map(l=>l.name).join(","),operation:op,hours:hrs.toFixed(1),attType,date:today});
+  db.labourMaster.forEach((_,i)=>labSel[i]=false);
+  toast("✅ "+sel.length+" workers logged · "+hrs.toFixed(1)+"h each");
+  renderPage("labour");
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE: BATCHES
+// ═══════════════════════════════════════════════════════════
+
+function renderBatches() {
+  var act = db.batches.filter(b=>b.stage!=="Transferred");
+  var done = db.batches.filter(b=>b.stage==="Transferred");
+  return `
+<div style="position:relative;margin-bottom:10px">
+  <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3)">🔍</span>
+  <input placeholder="Search variety or batch ID..." style="padding-left:34px" oninput="filterBatches(this.value)" id="batchSearch">
+</div>
+<div id="batchList">
+${act.map(b=>batchCard(b)).join("")}
+${done.length?`<div style="font-size:11px;font-weight:700;color:var(--text3);margin:12px 0 8px;text-transform:uppercase;letter-spacing:.5px">Completed (${done.length})</div>${done.map(b=>batchCard(b,true)).join("")}`:""}
+</div>`;
+}
+
+function batchCard(b, compact) {
+  if (compact) return `<div class="card">
+    <div class="card-body" style="display:flex;align-items:center;gap:10px">
+      <div style="flex:1;min-width:0"><div style="font-size:11px;color:var(--g);font-family:monospace">${b.id}</div><div style="font-size:13px;font-weight:700">${b.variety}</div></div>
+      <div style="text-align:right;font-size:11px;color:var(--text3)"><div>Sticked: ${fmtDate(b.stickDate)}</div><div>Root: ${b.rootPct}%</div></div>
+      <span class="badge bg-gr">Complete</span>
+    </div></div>`;
+
+  var stages = ["Sticking","Rooting","Hardening","Ready","Done"];
+  var si = stages.indexOf(b.stage==="Transferred"?"Done":b.stage==="Rooting"?"Rooting":b.stage==="Hardening"?"Hardening":b.stage==="Ready"?"Ready":"Sticking");
+  var d = daysTo(b.expTransfer);
+  var dstr = d===null?"—":d<0?Math.abs(d)+"d overdue":d===0?"Transfer TODAY":d+"d left";
+  var dc = d!==null&&d<0?"flag-r":d===0?"flag-g":"";
+  var sc = stageClass(b.stage);
+  var fc = b.rootPct>=85?"var(--g)":b.rootPct>=60?"var(--a)":"var(--r)";
+
+  return `<div class="card">
+    <div class="card-body">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px">
+        <div>
+          <div style="font-size:10px;color:var(--g);font-weight:700;font-family:monospace;margin-bottom:3px">${b.id}</div>
+          <div style="font-size:16px;font-weight:700">${b.variety}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${b.block} · ${b.trays} trays · <strong style="color:var(--text)">${b.available.toLocaleString()}</strong> plants</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:26px;font-weight:700;line-height:1;color:${fc}">${b.rootPct}%</div>
+          <div style="font-size:10px;color:var(--text3)">rooting</div>
+          <span class="badge ${sc}" style="margin-top:4px">${b.stage}</span>
+        </div>
+      </div>
+
+      <div class="stage-track">
+        ${stages.map((s,i)=>`
+        ${i>0?`<div class="st-line ${i<=si?"done":""}"></div>`:""}
+        <div class="st-step">
+          <div class="st-dot ${i<si?"done":i===si?"current":""}">${i<si?"✓":i+1}</div>
+          <div class="st-lbl ${i<si?"st-done":i===si?"st-current":""}">${s}</div>
+        </div>`).join("")}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin:10px 0;font-size:10px;color:var(--text3);text-align:center">
+        <div><div style="font-weight:700;color:var(--text);font-size:11px">${fmtDate(b.identDate)}</div>Identified</div>
+        <div><div style="font-weight:700;color:var(--text);font-size:11px">${fmtDate(b.stickDate)}</div>Sticked</div>
+        <div><div style="font-weight:700;color:var(--text);font-size:11px">${fmtDate(b.expRoot)}</div>Exp. root</div>
+        <div><div style="font-weight:700;font-size:11px" class="${dc}">${dstr}</div>Transfer</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px">
+        <div style="background:var(--bg);border-radius:var(--rad2);padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--r)">${b.mortality}</div>
+          <div style="font-size:9px;color:var(--text3);font-weight:700">MORTALITY</div>
+        </div>
+        <div style="background:var(--bg);border-radius:var(--rad2);padding:8px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:var(--b)">${((b.mortality/b.cuttings)*100).toFixed(1)}%</div>
+          <div style="font-size:9px;color:var(--text3);font-weight:700">MORTALITY %</div>
+        </div>
+      </div>
+
+      ${b.stage==="Ready"?`<div style="margin-top:10px">
+        <button class="btn btn-p btn-full" onclick="curOpsPage='transfer';showPage('ops')">🚚 Transfer now — ${b.available.toLocaleString()} plants ready</button>
+      </div>`:""}
+    </div>
+  </div>`;
+}
+
+function filterBatches(q) {
+  var filtered = db.batches.filter(b=>b.id.toLowerCase().includes(q.toLowerCase())||b.variety.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById("batchList").innerHTML = filtered.map(b=>batchCard(b)).join("") || "<p style='text-align:center;color:var(--text3);padding:20px'>No batches found</p>";
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE: MORE (Stock, Admin, Settings)
+// ═══════════════════════════════════════════════════════════
+
+function renderMore() {
+  return `
+<div class="card">
+  <div class="card-hd"><div class="card-title"><span class="card-icon">📦</span>Stock register — real-time</div><button class="btn btn-sm" onclick="toast('Purchase entry goes to Google Sheets')">+ Purchase</button></div>
+  ${db.stock.map((s,i)=>{
+    var pct=Math.min(100,Math.round((s.current/s.opening)*100));
+    var c=s.current<=0?"var(--r)":s.current<=s.reorder?"var(--a)":"var(--g)";
+    var sc=s.current<=0?"bg-r":s.current<=s.reorder?"bg-a":"bg-g";
+    return `<div class="list-row">
+      <div class="list-main">
+        <div class="list-title">${s.name}</div>
+        <div class="list-sub">${s.cat} · Reorder at ${s.reorder} ${s.unit}</div>
+        <div class="stock-bar-wrap"><div class="stock-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+      </div>
+      <div class="list-right">
+        <div style="font-size:15px;font-weight:700;color:${c}">${s.current}</div>
+        <div style="font-size:10px;color:var(--text3)">${s.unit}</div>
+        <span class="badge ${sc}" style="margin-top:3px">${s.current<=0?"OUT":s.current<=s.reorder?"REORDER":"OK"}</span>
+      </div>
+    </div>`;
+  }).join("")}
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-title"><span class="card-icon">⚙️</span>System settings</div></div>
+  <div class="card-body">
+    <div class="fg">
+      <label>Google Sheets Web App URL (Apps Script)</label>
+      <input type="url" id="wh_url" placeholder="https://script.google.com/macros/s/.../exec" value="${WEBHOOK}" oninput="WEBHOOK=this.value;localStorage.setItem('AKF_WEBHOOK',this.value)">
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5">Paste your deployed Apps Script URL here. Every change in Admin Settings in Google Sheets will automatically reflect in this app on next sync.</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" onclick="manualSync()">Test & Sync Now</button>
+      <button class="btn" onclick="syncFromSheets()">Force Reload</button>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--text3)">
+      Last synced: <strong style="color:var(--text)">${lastSynced||"Never"}</strong> ·
+      Auto-sync: <strong style="color:var(--g)">Every 5 min</strong>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-hd"><div class="card-title"><span class="card-icon">📤</span>Offline queue</div><span id="qCountBadge" class="badge ${offlineQueue.length>0?"bg-a":"bg-gr"}">${offlineQueue.length} items</span></div>
+  <div class="card-body">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Submissions made when offline are stored here and auto-sent when you reconnect.</div>
+    <button class="btn ${offlineQueue.length>0?"btn-p":""}" onclick="flushQueue()" ${!offlineQueue.length?"disabled":""}>Send ${offlineQueue.length} queued item${offlineQueue.length!==1?"s":""}</button>
+  </div>
+</div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PAGE: ALERTS
+// ═══════════════════════════════════════════════════════════
+
+function renderAlerts() {
+  return `
+<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${db.alerts.length} active alerts</div>
+${db.alerts.map((a,i)=>`
+<div class="card" style="border-left:3px solid ${a.type==="r"?"var(--r)":a.type==="a"?"var(--a)":"var(--g)"}">
+  <div class="card-body" style="display:flex;align-items:flex-start;gap:10px">
+    <div style="font-size:20px;flex-shrink:0">${a.type==="r"?"🔴":a.type==="a"?"🟡":"🟢"}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:700">${a.msg}</div>
+    </div>
+    <button class="btn btn-sm" onclick="resolveAlert(${i})">Resolve</button>
+  </div>
+</div>`).join("")||`<div class="card"><div class="card-body" style="text-align:center;padding:20px;color:var(--text3)">No active alerts ✅</div></div>`}
+
+<div class="card" style="margin-top:4px">
+  <div class="card-hd"><div class="card-title"><span class="card-icon">📈</span>Smart system checks</div></div>
+  ${db.batches.filter(b=>b.stage==="Rooting"&&b.rootPct>0&&b.rootPct<60).map(b=>`
+  <div class="list-row">
+    <div class="list-main">
+      <div class="list-title flag-a">Low rooting — ${b.variety}</div>
+      <div class="list-sub">${b.id} · ${b.rootPct}% rooting (target: 85%)</div>
+    </div>
+    <button class="btn btn-sm" onclick="curOpsPage='rooting';showPage('ops')">Log obs</button>
+  </div>`).join("")}
+  ${db.batches.filter(b=>{var d=daysTo(b.expTransfer);return d!==null&&d<=0&&b.stage!=="Transferred";}).map(b=>`
+  <div class="list-row">
+    <div class="list-main">
+      <div class="list-title flag-r">Transfer overdue — ${b.variety}</div>
+      <div class="list-sub">${b.id} · ${Math.abs(daysTo(b.expTransfer))} days past due date</div>
+    </div>
+    <button class="btn btn-sm btn-p" onclick="curOpsPage='transfer';showPage('ops')">Transfer</button>
+  </div>`).join("")}
+  ${db.stock.filter(s=>s.current<=0).map(s=>`
+  <div class="list-row">
+    <div class="list-main">
+      <div class="list-title flag-r">OUT OF STOCK — ${s.name}</div>
+      <div class="list-sub">0 ${s.unit} remaining</div>
+    </div>
+  </div>`).join("")}
+</div>`;
+}
+function resolveAlert(i){db.alerts.splice(i,1);renderPage("alerts");toast("✅ Alert resolved");}
+
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+
+function recBox(title, items) {
+  return `<div class="rec-box"><div style="font-size:10px;font-weight:700;opacity:.6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">💡 ${title}</div>${items.map(i=>`<div class="rec-item"><span class="rec-icon">→</span><span>${i}</span></div>`).join("")}</div>`;
+}
+function stageClass(s){return s==="Ready"?"bg-g":s==="Hardening"?"bg-a":s==="Transferred"?"bg-gr":"bg-b";}
+function fmtDate(d){if(!d||d==="—")return"—";var p=d.split("-");return p[2]+"/"+p[1]+"/"+p[0];}
+function daysTo(d){if(!d)return null;return Math.ceil((new Date(d)-new Date(today))/(1000*60*60*24));}
+function quickPost(type, msg) { queuePost(type, {date:today}); toast("✅ "+msg); }
+function toast(msg){var el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),3000);}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+
+updateQueueBadge();
+renderPage("today");
+startAutoSync();
+</script>
+</body>
+</html>
